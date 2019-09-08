@@ -1,0 +1,101 @@
+---
+title: "Data 605 Assingment #2 "
+author: "Joseph Simone"
+date: "9/7/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Problem Set 1 
+
+1. Proof 
+
+```{r}
+a <- matrix(1:12, ncol = 3, nrow = 4)
+
+a
+```
+
+
+```{r}
+at<-t(a)
+
+aat<-a%*%at
+
+aat
+```
+
+```{r}
+ata<-at%*%a
+
+ata
+```
+
+2. For a special type of square matrix A, Under what conditions could this be true?
+
+```{r}
+a <- matrix(c(1,2,3,2,4,5,3,5,6), ncol = 3, nrow = 3)
+
+a
+```
+
+```{r}
+at<-t(a)
+
+att<-a%*%at
+
+att
+```
+
+
+```{r}
+ata<-at%*%a
+
+ata
+```
+
+
+## Problem Set 2 
+
+1. Matrix factorization is a very important problem. There are supercomputers built just to do matrix factorizations. Every second you are on an airplane, matrices are being
+factorized. Radars that track flights use a technique called Kalman filtering. At the heart of Kalman Filtering is a Matrix Factorization operation. Kalman Filters are solving linear systems of equations when they track your flight using radars.
+
+Write an R function to factorize a square matrix A into LU or LDU, whichever you prefer.
+
+```{r}
+x<-matrix(c(11,4,9,8,88,7,1,77,32,3,99,67,67,45,3,5),ncol=4,nrow=4)
+
+x
+```
+
+
+```{r}
+l<-function(b){
+  A<-diag(nrow(b))
+  for (i in 2:(nrow(b)))
+    {for (j in i:(nrow(b)))
+      {
+      temp<-b[j,i-1]/b[i-1,i-1]
+      b[j,]<-b[j,]-(b[j,i-1]/b[i-1,i-1])*b[i-1,]
+      A[j,i-1]<-temp
+      }
+    }
+    print(b)
+    print(A)
+    return(A%*%b)
+            }
+
+A<-l(x)
+```
+
+
+
+```{r}
+A
+```
+
