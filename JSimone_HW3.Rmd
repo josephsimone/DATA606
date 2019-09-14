@@ -1,0 +1,248 @@
+---
+title: "Data 606 Assignment 3"
+author: "Joseph Simone"
+date: "9/13/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+## Chapter 3 - Porbability 
+
+Libraries used:
+```{r}
+library(knitr)
+library(VennDiagram)
+library(png)
+library(grid)
+library(gmodels)
+library(openintro)
+```
+
+
+## Dice Roll
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/1.png"
+include_graphics(imgage)
+```
+
+a.There is not combinations a pair of dice being rolled will result in a sum of 1.
+
+b. 
+```{r}
+## Combinations: ((1,4),(2,3), (3,2), (4,1))
+
+(4/36)
+```
+
+c. 
+```{r}
+#Combinations (6,6)
+(1/36)
+```
+
+## Poverty and Language 
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/2.png"
+include_graphics(imgage)
+```
+
+a.There are 4.2% of people who fall into both living below the proverty line and speaking a foreign language, therefore, the answer is no.
+
+b.
+
+```{r}
+venn <- draw.pairwise.venn(14.6, 20.7, 4.2, c("Foreing Language", "Povery"),  scale = FALSE, fill = c("blue", "red"));
+grid.draw(venn);
+```
+
+c.  10.4 percent living below the poverty line and speak English at home
+
+d.
+
+```{r}
+Poverty_foreign <- (14.6+20.7)-4.2
+Poverty_foreign
+```
+
+e.
+
+```{r}
+100 - Poverty_foreign
+```
+
+
+f. 
+
+## Assortative Mating
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/3.png"
+include_graphics(imgage)
+```
+
+```{r}
+am <- data.frame(assortive.mating)
+am
+```
+
+
+```{r}
+blue = subset(am, partner_female == "blue")
+
+x = table(am$self_male, am$partner_female)
+y = as.data.frame(x)
+names(y)[1] = 'Self Male'
+names(y)[2] = 'Partner Female'
+y
+```
+
+a.
+```{r}
+ ((sum(am$self_male =="blue")/nrow(am)) +
++  (sum(am$partner_female =="blue")/nrow(am)))- (sum(am$self_male =="blue" & am$partner_female=="blue")/nrow(am))
+```
+
+
+b. 
+
+```{r}
+ (sum(am$self_male =="blue" & am$partner_female=="blue")/nrow(am))/(sum(am$self_male=="blue")/nrow(am))
+```
+
+c. 
+```{r}
+(sum(am$self_male =="brown" & am$partner_female=="blue")/nrow(am))/(sum(am$self_male=="brown")/nrow(am))
+```
+
+d. The probability that a random self male from the study has a blue eyes is 56% and the probability of randomly select a partner female with blue eyes is 52.4% .Therefore, Both variables are dependent.
+
+## Books on a Bookshelf
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/4.png"
+include_graphics(imgage)
+```
+
+
+```{r}
+bc <- data.frame(books)
+
+```
+
+```{r}
+with(warpbreaks, CrossTable(bc$type, bc$format, prop.r = TRUE, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE))
+```
+
+
+a.
+
+```{r}
+(sum(bc$format=="hardcover"))/sum(table(bc)) *
+(sum(bc$format=="paperback" & bc$type == "fiction"))/(sum(table(bc))-1)
+```
+
+
+b. 
+
+```{r}
+(sum(bc$type=="fiction"))/sum(table(bc)) *
+(sum(bc$format=="hardcover"))/(sum(table(bc))-1)
+```
+
+
+c.
+
+```{r}
+(sum(bc$type=="fiction"))/sum(table(bc)) *
+(sum(bc$format=="hardcover"))/(sum(table(bc)))
+```
+
+d. Explain why this is the case. The larger the samples the smaller the difference.
+
+## Baggage fees
+```{r, include=TRUE }
+```
+
+
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/5.png"
+include_graphics(imgage)
+```
+
+
+a. 
+
+```{r}
+num_bags <- c('no-bags', 'one-bags', 'two-bags')
+bag_fee <- c(0,25,35)
+pass <- c(.54, .34, .12)
+sample <- data.frame(num_bags, pass, bag_fee)
+average_revenue <- (sum((sample$pass*sample$bag_fee))/sum(sample$pass))
+average_revenue
+```
+
+
+```{r}
+sqrt(0.54*(0-average_revenue)^2 + 0.34*(25-average_revenue)^2 + 0.12*(35-average_revenue)^2)
+```
+
+
+b.
+
+```{r}
+avg120flight <- (65*0 + 41*25 + 14 *25 + 14 * 35)
+avg120flight
+```
+
+```{r}
+x <- c(0, 1025,840)
+
+sqrt(sum((x-mean(x))^2/(length(x)-1)))
+```
+
+```{r}
+sd(x)
+```
+
+
+## Income and gender
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/5.png"
+include_graphics(imgage)
+```
+
+a. 
+
+```{r}
+Income_range <- c("1 to $9999 or loss",
+                  "10,000 to 14,999", "15, 000 to 24,999",
+                  "25,000 to 34,999", "35,000 to 49,999", 
+                  "50,000 to 64,999", "65,000 to 74,999",
+                  "75,000 to 99,999", "100,000 or more")
+total <- c(.022, .047, 0.158, 0.183, 0.212, 0.139, 0.058, 0.084, 0.097)
+x <- data.frame (Income_range, total)
+x
+```
+
+
+```{r}
+barplot(total)
+```
+
+
+b.
+
+```{r}
+sum(x[1:5,2])
+```
+
+
+c.
+
+```{r}
+0.622 * 0.41
+```
+
+
+d. In conculsion, the assumption that was made in part C is wrong,it appears that like events are not independent.
