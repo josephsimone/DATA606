@@ -1,0 +1,386 @@
+---
+title: "Data 606 Assignment 4"
+author: "Joseph Simone"
+date: "9/27/2019"
+output: html_document
+---
+```{r}
+
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(tidyr)
+library(dplyr)
+library(png)
+library(ggplot2)
+
+
+```
+
+Libaries used: 
+library(knitr)
+library(png)
+library(ggplot2)
+
+
+## Chapter 4 - Distrubutions of Random Variables
+
+### Area under the Curve, Part 1 (4.1, p. 142)
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/4.1.png"
+include_graphics(imgage)
+```
+
+ A. Z < -1.35
+
+```{r}
+m <- 0
+sd <- 1
+z <- -1.35
+x <- z * sd + m
+```
+
+
+```{r}
+a <- (pnorm(q = -1.35, mean = 0, sd = 1))*100
+ggplot(NULL, aes(c(-4,4))) +
+  geom_area(stat = "function", fun = dnorm, fill = "navyblue", xlim = c(-4, -1.35)) +
+  geom_area(stat = "function", fun = dnorm, fill = "darkgrey", xlim = c(-1.35, 4))
+```
+
+```{r}
+y <- pnorm(x, m, sd)
+print(paste("The probability of Z > -1.35 =", y))
+```
+
+ B. Z > 1.48
+
+```{r}
+z <- 1.48
+x <- z * sd + m
+```
+
+```{r}
+b <- (pnorm(q = 1.48, mean = 0, sd = 1))*100
+ggplot(NULL, aes(c(-4,4))) +
+  geom_area(stat = "function", fun = dnorm, fill = "navyblue", xlim = c(1.48, 4)) +
+  geom_area(stat = "function", fun = dnorm, fill = "darkgrey", xlim = c(-4, 1.48))
+```
+
+```{r}
+y = 1-pnorm(x, m, sd)
+print(paste("The probability of Z > 1.48 =", y))
+```
+
+ C. -0.4 < Z < 1.5
+
+```{r}
+z <- c(-0.4,1.5)
+x <- z * sd + m
+
+```
+
+```{r}
+c <- (pnorm(q = 1.5, mean = 0, sd = 1) - pnorm(-0.4, 0, 1)) * 100
+ggplot(NULL, aes(c(-4,4))) +
+  geom_area(stat = "function", fun = dnorm, fill = "navyblue", xlim = c(-.4, 1.5)) +
+  geom_area(stat = "function", fun = dnorm, fill = "darkgrey", xlim = c(-4,-.4))+
+  geom_area(stat = "function", fun = dnorm, fill = "darkgrey", xlim = c(1.5:4))
+```
+
+```{r}
+y <- pnorm(x,m,sd)
+print(paste("The unique probability of -0.4 < Z < 1.5 =", y))
+```
+
+```{r}
+q = 0.933192798731142 - 0.344578258389676
+print(paste("The probability of -0.4 < Z < 1.5 =", y))
+```
+
+
+ D. |Z| > 2
+
+```{r}
+z <- c(-2,2)
+x <- z * sd + m
+```
+
+```{r}
+d <- (pnorm(-2, 0, 1)*2) * 100
+ggplot(NULL, aes(c(-4,4))) +
+  geom_area(stat = "function", fun = dnorm, fill = "navyblue", xlim = c(-4,-2)) +
+  geom_area(stat = "function", fun = dnorm, fill = "navyblue", xlim = c(2,4))+
+  geom_area(stat = "function", fun = dnorm, fill = "darkgrey", xlim = c(-2,2))
+```
+
+
+```{r}
+y = pnorm(x,m,sd)
+print(paste("The unqiue probability of |Z| > 2  =", y))
+```
+
+```{r}
+q = 0.977249868051821 - 0.0227501319481792
+print(paste("The probability of |Z| > 2  =", y))
+```
+
+
+### Triathlon Times
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/4.2.png"
+include_graphics(imgage)
+```
+
+
+ A. Write down the short-hand for these two normal distributions.
+
+ Leo: Men, Ages 30 - 34 N(4313, 583);
+ Mary: Women, Ages 25 - 29 N( 5261,807)
+
+ B. What are the Z-scores for Leo’s and Mary’s finishing times? What do these Z-scores tell you?
+
+```{r}
+x_men <- 4948
+m_men <- 4313
+sd_men <- 583
+z_men <- (x_men - m_men)/(sd_men)
+z_men
+```
+
+```{r}
+x_women <- 5513
+m_women <- 5261
+sd_women <- 807
+z_women <- (x_women - m_women)/(sd_women)
+z_women
+```
+
+ These two calculations of z scores shows that Leo had a standard deviation of 1.089 while Mary had a deviation of 0.312 from the mean. Therefore, Mary is more closer in the of the mean of her gender, according to the data collected.
+
+ C. Did Leo or Mary rank better in their respective groups? Explain your reasoning.
+
+ According to the calculated Z-scores above, Mary is much closer to her respective category mean. In this respect, Mary ranks higher in her respective group.
+  
+ D. What percent of the triathletes did Leo finish faster than in his group?
+
+```{r}
+pnorm(z_men, lower.tail = FALSE)
+```
+
+ E. What percent of the triathletes did Mary finish faster than in her group?
+
+```{r}
+pnorm(z_women, lower.tail = FALSE)
+```
+
+F. If the distributions of finishing times are not nearly normal, would your answers to parts (b) - (e) change? Explain your reasoning.
+
+ If the distributions of finishing times are not nearly normal, the Z score will not be effect, however, the pnorm will change.
+
+
+Heights of female college students
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/4.3.png"
+include_graphics(imgage)
+```
+
+```{r}
+heights = cbind(54,55,56,56,57,58,58,59,60,60,60,61,61,62,62,63,63,63,64,65,65,67,67,69,73)
+
+```
+
+
+```{r}
+#qqnormsim(heights)
+# could not get this function to work in R-markdown but got it to work in my R-Studio Console
+```
+
+```{r, fig.width=2, fig.height=10, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/assign4.png"
+include_graphics(imgage)
+``` 
+
+A. The mean height is 61.52 inches with a standard deviation of 4.58 inches. Use this information to determine if the heights approximately follow the 68-95-99.7% Rule.
+
+```{r}
+#calc mean
+mean_height = mean(heights)
+
+#calc standard deviation
+sd_height = sd(heights)
+
+ 1-2*pnorm(mean_height+sd_height, mean_height, sd_height, lower.tail = FALSE)
+```
+
+
+```{r}
+1-2*pnorm(mean_height+2*sd_height, mean_height, sd_height, lower.tail = FALSE)
+```
+
+```{r}
+1-2*pnorm(mean_height+3*sd_height, mean_height, sd_height, lower.tail = FALSE)
+```
+
+ According to the above calulations, the heights do follow the 68-95-99.7% Rule.
+
+ B.  Do these data appear to follow a normal distribution? Explain your reasoning using the graphs provided below.
+
+```{r}
+hist(heights, probability = TRUE, xlab = "Heights", col = "darkgrey" ,  ylim = c(0, 0.1))
+x <- 30:90
+y <- dnorm(x = x, mean = mean_height, sd = sd_height)
+lines(x = x, y = y, col = "blue")
+abline(v = mean_height, col = "red")
+```
+
+According to the above calulations, the data appear to follow a normal distribution.
+
+
+### Defective rates
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/4.4.png"
+include_graphics(imgage)
+
+```
+
+
+A. what is the probability that the 10th transistor produced is the first with a defect?
+
+```{r}
+error_10 = (.98*.98*.98*.98*.98*.98*.98*.98*.98*.02) * 100
+error_10
+```
+
+
+B. What is the probability that the machine produces no defective transistors in a batch of 100?
+
+```{r}
+na_error = ( .98 ^ 100)
+na_error
+```
+
+
+C. On average, how many transistors would you expect to be produced before the first with a defect? what is the standard deviation?
+
+```{r}
+error_mean_20 = 1 / .02
+error_mean_20
+```
+
+
+```{r}
+error_sd_20 = ((1-.02) / (.02^2) )^(1/2)
+error_sd_20
+```
+
+
+D. Another machine that also produces transistors has a 5% defective rate where each transistor is produced independent of the others. On average how many transistors would you expect to be produced with this machine before the first with a defect? What is the standard deviation?
+
+```{r}
+error_mean_50 <- 1 / .05
+error_mean_50 
+```
+
+
+```{r}
+error_sd_50 <- ( (1-.05) / (.05^2) )^(1/2)
+error_sd_50
+```
+
+E. Based on your answers to parts (c) and (d), how does increasing the probability of an event affect the mean and standard deviation of the wait time until success?
+
+Solution: When the probability of an event increases, the average occurence rate of an event also increases. On the other hand, when increasing the probability of an event, this will reduce the standard deviation. 
+
+### Male Children
+
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/4.5.png"
+include_graphics(imgage)
+
+```
+
+
+A. Use the binomial model the calculate the probability that two of them will be boys
+
+```{r}
+dbinom(2, 3, .51)
+```
+
+
+B. Write out all possible orderings of 3 children, 2 of whom are boys. Use these scenarios to calculate the
+same probability from part (a) but using the addition rule for disjoint outcomes. Confirm that your
+answers from parts (a) and (b) match.
+
+```{r}
+(.51*.51*.49) + (.51*.49*.51) + (.49*.51*.51)
+```
+
+
+C. If we wanted to calculate the probability that a couple who plans to have 8 kids will have 3 boys, briefly describe why the approach from part (b) would be more tedious than the approach from part (a).
+
+The appoarch to part b is more tediouys than a because we are still doing to computation the long way, instead of using a build-in function.,
+
+### Serving in volleyball
+
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/4.6.png"
+include_graphics(imgage)
+
+```
+
+
+
+A. What is the probability that on the 10th try she will make her 3rd successful serve?
+
+```{r}
+dbinom(2, 9, .15) * .15
+```
+
+
+
+
+B. Suppose she has made two successful serves in nine attempts. What is the probability that her 10th serve will be successful?
+
+Solution: 15
+
+
+C. Even though parts (a) and (b) discuss the same scenario, the probabilities you calculated should be different. Can you explain the reason for this discrepancy?
+
+This is due to the fact that all variables are independent. Whereas, in part a we can see hitting two shots out of 9 will increase the likely-hood of making the last shot by 15%. However, in b there is always a 15% of making the last shot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
