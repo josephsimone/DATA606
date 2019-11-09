@@ -1,0 +1,200 @@
+---
+title: "Data 606 - Chapter 8 - Introduction to Linear Regression"
+author: "Joseph Simone"
+date: "11/5/2019"
+output:
+  html_document:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+library(png)
+library(knitr)
+library(openintro)
+```
+
+### Nutrition at Starbucks, Part I. (8.22, p. 326)
+
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/starbucks.png"
+include_graphics(imgage)
+```
+
+(a) Describe the relationship between number of calories and amount of carbohydrates (in grams) that
+Starbucks food menu items contain.
+
+There is positive linear relationship between calorie and carbohydrates.
+
+(b) In this scenario, what are the explanatory and response variables?
+
+
+x - axis is Calorie which is explanatory variable
+
+y-axis is Carbohydrate which is response variable.
+
+
+(c) Why might we want to fit a regression line to these data?
+
+We would like to predict the amount of carbs based on calorie count.
+
+
+(d) Do these data meet the conditions required for fitting a least squares line?
+
+The data fit a linear plot, residuals appear nearly normal. we cannot achieve constant variability.
+
+
+### Body measurements, Part I. (8.13, p. 316)
+
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/body.png"
+include_graphics(imgage)
+```
+
+```{r}
+data(bdims)
+```
+
+```{r}
+par(mar = c(3.8, 3.8, 0.5, 0.5), las = 1, mgp = c(2.7, 0.7, 0), 
+    cex.lab = 1.25, cex.axis = 1.25)
+plot(bdims$hgt ~ bdims$sho.gi, 
+     xlab = "Shoulder girth (cm)", ylab = "Height (cm)", 
+     pch = 19, col = COL[1,2])
+```
+
+(a) Describe the relationship between shoulder girth and height.
+This relationship shows that the larger ones shoulder girth the taller one might be.
+ 
+
+(b) How would the relationship change if shoulder girth was measured in inches while the units of height
+remained in centimeters?
+
+This relationship would remain the same.
+
+## Body measurements, Part III. (8.24, p. 326)
+
+Exercise above introduces data on shoulder girth and height of a group of individuals. The mean shoulder girth is 107.20 cm with a standard deviation of 10.37 cm. The mean height is 171.14 cm with a standard deviation of 9.41 cm. The correlation between height and shoulder
+girth is 0.67.
+
+(a) Write the equation of the regression line for predicting height.
+
+ $\hat{y} = 105.8445 + 0.6091 * `shouldergirth`$
+ 
+(b) Interpret the slope and the intercept in this context.
+
+For additional cm of shoulder girth, there would be additional .6091 of height.We would expect a height of .6091 , If the shoulder girth of person is Zero.
+
+
+(c) Calculate R2 of the regression line for predicting height from shoulder girth, and interpret it in the
+context of the application.
+
+```{r}
+B1=round(0.67 * (9.41/10.35),4)
+B0=round(B1 * -107.20 + 171.14 , 4)
+R=0.67
+R2=R*R
+R2
+```
+
+(d) A randomly selected student from your class has a shoulder girth of 100 cm. Predict the height of this
+student using the model.
+
+```{r}
+R100=B0 + B1 * 100
+R100
+```
+
+
+(e) The student from part (d) is 160 cm tall. Calculate the residual, and explain what this residual means.
+
+```{r}
+Res=160 - 166.7545
+Res
+```
+
+Model Overestimated the height of the individual.
+
+(f) A one year old has a shoulder girth of 56 cm. Would it be appropriate to use this linear model to
+predict the height of this child?
+
+This can be achieved only through Extrapolation. We are making an assumption that we can achieve linear relationship in uncharted data
+
+
+## Cats, Part I. (8.26, p. 327) 
+
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/cats.png"
+include_graphics(imgage)
+```
+
+(a) Write out the linear model.
+
+$\hat{y} = -0.357 + 4.034 * `bodyweight`$
+
+(b) Interpret the intercept.
+
+If cat’s body weight is zero, we will expect the heart to weight -0.357 grams
+
+(c) Interpret the slope.
+
+For each additional kg of body weight, we can expect cat’s heaert to weigh additional 4.034 grams
+
+(d) Interpret R2
+
+$R2 = 64.66%$, which means 64.66% of observed data can be explained using the linear model in a 
+
+(e) Calculate the correlation coefficient.
+
+```{r}
+B0=-0.357
+B1=4.034
+
+R2=.6466
+corcof = sqrt(R2)
+corcof
+```
+
+## Rate my professor. (8.44, p. 340)
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/ratep.png"
+include_graphics(imgage)
+```
+
+(a) Given that the average standardized beauty score is -0.0883 and average teaching evaluation score
+is 3.9983, calculate the slope. Alternatively, the slope may be computed using just the information
+provided in the model summary table.
+
+```{r}
+B0=4.010
+B1=4.13 * 0.0322
+B1
+```
+
+
+(b) Do these data provide convincing evidence that the slope of the relationship between teaching evaluation
+and beauty is positive? Explain your reasoning.
+
+On looking at scatter plot we can just see Scaters. There is no any upward or downward trend. p is shown as zero in summary table. It can be read as accepting the null hypothesis; there is no relation between teaching evaluation and beauty.
+
+(c) List the conditions required for linear regression and check if each one is satisfied for this model based
+on the following diagnostic plots.
+
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/ratepc.png"
+include_graphics(imgage)
+```
+
+```{r, include=TRUE }
+imgage <- "C:/Users/jpsim/Documents/Stat & Probability for Data/ratepca.png"
+include_graphics(imgage)
+```
+
+Visual inspection of scatterplot suggest residuals are randomly scattered around horizontal axis. Therefore, linearity is achieved.
+
+Histogram skewed to the left, resulting in the possibility of some outliers. 
+
+Residuals are normal.
+
+In the scatterplot, the points has constant variance.
+
+These are independant observations, and shows a minor linear trends.
