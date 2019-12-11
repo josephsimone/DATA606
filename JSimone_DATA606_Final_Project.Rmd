@@ -1,0 +1,224 @@
+---
+title: "Data 606 - Final Project"
+author: "Joseph Simone"
+date: "12/8/2019"
+output: pdf_document
+---
+
+## Linear Regression - Weather Data
+
+```{r setup, echo=TRUE, warning=FALSE, message=FALSE}
+library(RCurl)
+library(rattle)
+library(batchtools)
+library(ggplot2)
+library(caret)
+library(gmodels)
+library(gridExtra)
+library(corrplot)
+library(e1071)
+library(dplyr)
+library(GGally)
+```
+
+### First Data-Import 
+
+```{r, warning=FALSE, message=FALSE}
+weather_raw <- read.csv(url("https://raw.githubusercontent.com/josephsimone/DATA607/master/ww-ii-data..csv"), header = TRUE, sep = ",", dec=".", stringsAsFactors = TRUE)
+```
+
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+dim(weather_raw)
+```
+
+
+```{r, , warning=FALSE, message=FALSE}
+str(weather_raw)
+```
+
+
+### Cases 
+
+To begin with, I wanted to do a Linear Regression Model using this War World II that I found on [Kaggle](https://www.kaggle.com/smid80/weatherww2), however, as you can see by the Data Types of the this Data-Set.  Since this Data-Set is from the 1940's, some of the values had 'character' values mixed in with 'decimal' valus. Nevertheless, I would like to continue to use "Weather-Related" Data. Therefore, I will for using the Sample Data-Set from ["Data Mining with Rattle and R The Art of Excavating Data for Knowledge Discover" by Graham Williams](https://link.springer.com/book/10.1007/978-1-4419-9890-3), "weather". This Data-Set comes from a weather monitoring station located in Canberra, Australia.The Bureau makes available 13 months of daily weather observations from many locations across Australia. 
+
+
+At first glace, the information in this dataset includes  Rainfall, temperatures, wind speed and  humatity at different times of day.There are over twenty cases in this dataset, however, a lot of the cases and NULL. Therefore, I will be eleminating them from my dataset for analysis. The cases that I will be keeping include, the station #, , date, precipitation, wind gust speed, max, min and mean temperature, and snowfall.**
+
+
+### Data collection 
+
+Observations were drawn from Canberra Airport {station 070351}.
+
+Some cloud observations are from automated equipment; these are somewhat different to those made by a human observer and may not appear every day.
+
+
+### Type of study 
+
+This study is an observational study, this is a collected of weather conditions recorded on each day at various weather station in Australia.
+
+
+### Data Source 
+
+[Australian Government - Bureau of Meterology](www.ncdc.noaa.gov/data-access/land-based-station-data/land-based-datasets/world-war-ii-era-data).
+
+["Data Mining with Rattle and R The Art of Excavating Data for Knowledge Discover" by Graham Williams](https://link.springer.com/book/10.1007/978-1-4419-9890-3)
+
+### Dependent Variable
+
+The response vairbale that I will be trying to calculate, is going to be Rainfall. Given the Minimum Temperature can you predict the amount of Rainfal. Therefore, this is a quantitative variable.**
+
+### Independent Variable
+
+The two independent variables that I will using for this linear regression analysis are the Rainfall and Minimum Tempatures.
+
+### Final Data-Import 
+
+```{r}
+dim(weather)
+```
+
+```{r}
+names(weather)
+```
+
+
+##### Variable Distribtion:
+
+Date: The date of observation (a date object)<br>
+Location: The common name of the location of the weather station<br>
+MinTemp: The minimum temperature in degrees centigrade<br>
+MaxTemp: The maximum temperature in degrees centigrade<br>
+Rainfall: The amount of rainfall recorded for the day in millimeters<br>
+Evaporation: Class A pan evaporation (in millimeters) during 24 h<br>
+Sunshine: The number of hours of bright sunshine in the day<br>
+WindGustDir: The direction of the strongest wind gust in the 24 h to midnight<br>
+WindGustSpeed: The speed (in kilometers per hour) of the strongest wind gust in the 24 h to midnight<br>
+WindDir9am: The direction of the wind gust at 9 a.m.<br>
+WindDir3pm: The direction of the wind gust at 3 p.m.<br>
+WindSpeed9am: Wind speed (in kilometers per hour) averaged over 10 min before 9 a.m.<br>
+WindSpeed3pm: Wind speed (in kilometers per hour) averaged over 10 min before 3 p.m.<br>
+Humidity9am: Relative humidity (in percent) at 9 a.m.<br>
+Humidity3pm: Relative humidity (in percent) at 3 p.m.<br>
+Pressure9am: Atmospheric pressure (hpa) reduced to mean sea level at 9 a.m.<br>
+Pressure3pm: Atmospheric pressure (hpa) reduced to mean sea level at 3 p.m.<br>
+Cloud9am: Fraction of sky obscured by cloud at 9 a.m. This is measured in ”oktas,” which are a unit of eighths. It records how many eighths of the sky are obscured by cloud. A 0 measure indicates completely clear sky, while an 8 indicates that it is completely overcast<br>
+Cloud3pm: Fraction of sky obscured by cloud at 3 p.m; see Cloud9am for a description of the values<br>
+Temp9am: Temperature (degrees C) at 9 a.m.<br>
+Temp3pm: Temperature (degrees C) at 3 p.m.
+RainToday: Integer 1 if precipitation (in millimeters) in the 24 h to 9 a.m. exceeds 1 mm, otherwise 0<br>
+RISK_MM: The continuous target variable; the amount of rain recorded during the next day<br>
+RainTomorrow: The binary target variable whether it rains or not during the next day<br>
+
+```{r}
+write.csv(weather, file = "weather.csv")
+```
+
+
+```{r}
+set.seed(123)
+wd <- read.csv(url("https://raw.githubusercontent.com/josephsimone/DATA607/master/weather.csv"), header = TRUE, sep = ",", stringsAsFactors = TRUE)
+
+dim(wd)
+```
+
+
+```{r}
+wd <- wd[complete.cases(wd),]
+```
+
+
+```{r}
+
+wd <- subset(wd, select = -c(Date, Location, RISK_MM, RainTomorrow, RainToday, WindDir9am, WindDir3pm))
+wd <- wd%>%
+   select(Rainfall, everything())
+
+```
+
+
+
+### Reserach Question
+
+##### Given Minimum Temperature of a Day, can one predicted the amount of RainFall that it will rain the following day ?
+
+$H_\theta:$ Given Minimum Temperature, can you predict the amount of Rainfall for that day ?
+$H_A:$ One cannot predict the amount of Rainfall in a day, given the Minimum Temperature.
+### Scatter Plot
+
+```{r, warning=FALSE, message=FALSE}
+scatter.smooth(x=wd$Rainfall, y=wd$MinTemp, main="")
+```
+
+
+### BoxPlot
+```{r}
+par(mfrow=c(1, 2))
+
+boxplot(wd$Rainfall, main="Rainfall", sub=paste("Outlier rows: ", boxplot.stats(wd$Rainfall)$out))
+boxplot(wd$MinTemp, main="MinTemp", sub=paste("Outlier rows: ", boxplot.stats(wd$MinTemp)$out))
+```
+
+
+### Density PLot
+
+
+```{r}
+par(mfrow=c(1, 2))
+
+plot(density(wd$Rainfall), main="Density Plot: Rainfall", ylab="Frequency", sub=paste("Skewness:", round(e1071::skewness(wd$Rainfall), 2)))
+plot(density(wd$MinTemp), main="Density Plot: MinTemp", ylab="Frequency", sub=paste("Skewness:", round(e1071::skewness(wd$MinTemp), 2)))
+polygon(density(wd$MinTemp), col="blue")
+
+```
+
+### Correlation between Rainfall and MinTemp
+
+```{r}
+cor(wd$Rainfall, wd$MinTemp)
+```
+
+```{r}
+ggpairs(data=wd, columns=1:2, title="Rainfall vs MinTemp")
+```
+
+
+### Linear Model
+
+```{r}
+linearMod <- lm(Rainfall~MinTemp, data=wd)
+print(linearMod)
+```
+
+```{r}
+summary(linearMod)
+```
+
+
+### Pvalue 
+```{r}
+lmp <- function (modelobject) {
+    if (class(modelobject) != "lm") stop("Not an object of class 'lm' ")
+    f <- summary(modelobject)$fstatistic
+    p <- pf(f[1],f[2],f[3],lower.tail=F)
+    attributes(p) <- NULL
+    return(p)
+}
+lmp(linearMod)
+```
+
+### R-Squared
+
+```{r}
+summary(linearMod)$r.squared
+```
+
+
+### Conclusion
+The correlation between the Rainfall and Minimum Temperature is very weak. In addition the $R^2$ and $P$ value for this Linear Model are very low. 
+
+Thereofore we reject the null hypothesis, in favor of the alternative hypothesis, you cannot predict the amount of Rainfall given the Minimum Temperature.
+
+Weather patterns are known to be none-linear.  
+
+In the future,I would like to include more variables than the Maximum Temperature to predict the null hypothesis.
